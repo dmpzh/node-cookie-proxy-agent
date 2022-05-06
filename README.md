@@ -25,5 +25,4 @@ import { CookieJar } from 'tough-cookie';
 	const axiosClient = axios.create({ httpAgent, httpsAgent });
 	console.log('result: ', (await axiosClient.get('https://api.ipify.org?format=json')).data);
 })().catch(err => console.error(err));
-
 ```
