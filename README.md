@@ -8,7 +8,9 @@ npm install node-cookie-proxy-agent http-proxy-agent https-proxy-agent tough-coo
 
 ## Usage
 
-Pass `http-cookie-agent` to HTTP clients instead of http(s).Agent.
+Pass `node-cookie-proxy-agent` to HTTP clients instead of http(s).Agent.
+
+For exemple with axios:
 
 ```ts
 import axios from 'axios';
