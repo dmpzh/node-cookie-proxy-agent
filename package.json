@@ -1,8 +1,13 @@
 {
 	"name": "node-cookie-proxy-agent",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "HTTP & HTTPS agents with cookie and proxy support",
 	"main": "bin/agents.js",
+	"types": "bin/agents.d.ts",
+	"files": [
+		"bin",
+		"src"
+	],
 	"scripts": {
 		"build": "tsc --build",
 		"lint": "eslint --config ./.eslintrc --ignore-path ./.eslintignore --ext .js,.ts .",
