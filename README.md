@@ -1,5 +1,9 @@
 # node-cookie-proxy-agent
 
+![npm](https://img.shields.io/npm/v/node-cookie-proxy-agent)
+
+HTTP & HTTPS agents with cookie and proxy support
+
 ## Install
 
 ```bash

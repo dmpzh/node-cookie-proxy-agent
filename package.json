@@ -1,6 +1,6 @@
 {
 	"name": "node-cookie-proxy-agent",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "HTTP & HTTPS agents with cookie and proxy support",
 	"main": "bin/agents.js",
 	"types": "bin/agents.d.ts",
