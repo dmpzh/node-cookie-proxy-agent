@@ -4,7 +4,21 @@ import createHttpProxyAgent, { HttpProxyAgent } from 'http-proxy-agent';
 import createHttpsProxyAgent, { HttpsProxyAgent } from 'https-proxy-agent';
 import { Socket } from 'net';
 import { Cookie, CookieJar } from 'tough-cookie';
-import url from 'url';
+
+declare module 'agent-base' {
+	interface ClientRequest {
+		_header: string | null;
+		_headerSent: boolean;
+		_implicitHeader(): void;
+		_onPendingData(amount: number): void;
+		outputData: Array<{
+			callback: unknown;
+			data: string;
+			encoding: string;
+		}>;
+		outputSize: number;
+	}
+}
 
 abstract class BaseCookieProxyAgent extends Agent {
 	private readonly jar: CookieJar;
@@ -16,16 +30,9 @@ abstract class BaseCookieProxyAgent extends Agent {
 		this.proxyAgent = proxyAgent;
 	}
 
-	async performCookieAgent(req: ClientRequest): Promise<void> {
-		// retrieve request url
-		const requestUrl = url.format({
-			host: req.host,
-			pathname: req.path,
-			protocol: req.protocol
-		});
-
+	private updateRequestCookies(req: ClientRequest, requestUrl: string) {
 		// generate cookie header
-		const cookies = await this.jar.getCookies(requestUrl);
+		const cookies = this.jar.getCookiesSync(requestUrl);
 		const cookiesMap = new Map(cookies.map(cookie => [cookie.key, cookie]));
 		const cookieHeaderList = [req.getHeader('Cookie')].flat();
 		for (const header of cookieHeaderList) {
@@ -33,8 +40,9 @@ abstract class BaseCookieProxyAgent extends Agent {
 
 			for (const str of header.split(';')) {
 				const cookie = Cookie.parse(str.trim());
-				if (cookie === undefined) continue;
-
+				if (cookie === undefined) {
+					continue;
+				}
 				cookiesMap.set(cookie.key, cookie);
 			}
 		}
@@ -42,15 +50,40 @@ abstract class BaseCookieProxyAgent extends Agent {
 			.map(cookie => cookie.cookieString())
 			.join(';\x20');
 
-		// assign cookie header to request
-		if (cookieHeader) req.setHeader('Cookie', cookieHeader);
+		// assign the header
+		if (cookieHeader) {
+			if (req._header === null) {
+				req.setHeader('Cookie', cookieHeader);
+				return;
+			}
+			const alreadyHeaderSent = req._headerSent;
 
-		// update request emit
+			req._header = null;
+			req.setHeader('Cookie', cookieHeader);
+			req._implicitHeader();
+			req._headerSent = alreadyHeaderSent;
+
+			if (alreadyHeaderSent !== true) return;
+
+			const firstChunk = req.outputData.shift();
+			if (firstChunk === undefined) return;
+			const dataWithoutHeader = firstChunk.data.split('\r\n\r\n').slice(1).join('\r\n\r\n');
+			const chunk = {
+				...firstChunk,
+				data: `${req._header}${dataWithoutHeader}`
+			};
+			req.outputData.unshift(chunk);
+
+			const diffSize = chunk.data.length - firstChunk.data.length;
+			req.outputSize += diffSize;
+			req._onPendingData(diffSize);
+		}
+	}
+
+	private updateRequestEmit(req: ClientRequest, requestUrl: string) {
 		const emit = req.emit.bind(req);
 		req.emit = (event: string, ...args: unknown[]): boolean => {
-			if (event !== 'response') {
-				return emit(event, ...args);
-			}
+			if (event !== 'response') return emit(event, ...args);
 			const res = args[0] as IncomingMessage;
 			(async () => {
 				const cookies = res.headers['set-cookie'];
@@ -67,12 +100,15 @@ abstract class BaseCookieProxyAgent extends Agent {
 	}
 
 	callback(req: ClientRequest, opts: RequestOptions): Promise<Socket> {
-		return new Promise<Socket>(resolve => {
-			this.performCookieAgent(req)
-				.then(() => this.proxyAgent.callback(req as any, opts))
-				.then(socket => resolve(socket))
-				.catch(err => req.emit(err));
-		});
+		// perform cookie agent
+		const url = String(
+			Object.assign(new URL('http://a.com'), { host: req.host, pathname: req.path, protocol: req.protocol })
+		);
+		this.updateRequestCookies(req, url);
+		this.updateRequestEmit(req, url);
+
+		// send request via proxy
+		return this.proxyAgent.callback(req as any, opts);
 	}
 }
 

@@ -7,6 +7,7 @@
 		"build": "tsc --build",
 		"lint": "eslint --config ./.eslintrc --ignore-path ./.eslintignore --ext .js,.ts .",
 		"postinstall": "husky install",
+		"peerInstall": "npm i --no-package-lock",
 		"prettier": "prettier --config ./.prettierrc --write \"**/*.{js,json,md,ts}\"",
 		"prettier:check": "prettier --check --config ./.prettierrc \"**/*.{js,json,md,ts}\""
 	},
