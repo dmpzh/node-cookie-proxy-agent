@@ -1,0 +1,18 @@
+{
+	"root": true,
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": { "project": "tsconfig.json" },
+	"plugins": ["@typescript-eslint"],
+	"extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+	"rules": {
+		"@typescript-eslint/require-await": "error",
+		"@typescript-eslint/no-floating-promises": ["error", { "ignoreVoid": false, "ignoreIIFE": false }],
+		"@typescript-eslint/no-misused-promises": "error",
+		"@typescript-eslint/no-for-in-array": "error",
+		"@typescript-eslint/no-unused-vars": "error",
+		"@typescript-eslint/ban-ts-comment": "off",
+		"no-empty": "off",
+		"@typescript-eslint/no-empty-function": "off",
+		"@typescript-eslint/no-explicit-any": "off"
+	}
+}
