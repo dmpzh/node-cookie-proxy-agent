@@ -1,6 +1,6 @@
 # node-cookie-proxy-agent
 
-![npm](https://img.shields.io/npm/v/node-cookie-proxy-agent)
+[![npm](https://img.shields.io/npm/v/node-cookie-proxy-agent)](https://www.npmjs.com/package/node-cookie-proxy-agent)
 
 HTTP & HTTPS agents with cookie and proxy support
 
@@ -14,7 +14,7 @@ npm install node-cookie-proxy-agent http-proxy-agent https-proxy-agent tough-coo
 
 Pass `node-cookie-proxy-agent` to HTTP clients instead of http(s).Agent.
 
-For exemple with axios:
+For exemple with `axios`:
 
 ```ts
 import axios from 'axios';
@@ -24,8 +24,9 @@ import { CookieJar } from 'tough-cookie';
 (async () => {
 	// initialise this first
 	const jar = new CookieJar();
-	const httpAgent = new HttpCookieProxyAgent(jar, 'http://127.0.0.1:8888'); // or http://id:password@127.0.0.1:8888 to use with authentication
-	const httpsAgent = new HttpsCookieProxyAgent(jar, 'http://127.0.0.1:8888');
+	const proxy = 'http://127.0.0.1:8888'; // or http://id:password@127.0.0.1:8888 to use with authentication
+	const httpAgent = new HttpCookieProxyAgent(jar, proxy); 
+	const httpsAgent = new HttpsCookieProxyAgent(jar, proxy);
 
 	// add your agents to your http client
 	const axiosClient = axios.create({ httpAgent, httpsAgent });
