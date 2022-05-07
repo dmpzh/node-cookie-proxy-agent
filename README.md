@@ -25,7 +25,7 @@ import { CookieJar } from 'tough-cookie';
 	// initialise this first
 	const jar = new CookieJar();
 	const proxy = 'http://127.0.0.1:8888'; // or http://id:password@127.0.0.1:8888 to use with authentication
-	const httpAgent = new HttpCookieProxyAgent(jar, proxy); 
+	const httpAgent = new HttpCookieProxyAgent(jar, proxy);
 	const httpsAgent = new HttpsCookieProxyAgent(jar, proxy);
 
 	// add your agents to your http client

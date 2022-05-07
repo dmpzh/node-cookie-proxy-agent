@@ -1,6 +1,6 @@
 {
 	"name": "node-cookie-proxy-agent",
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"description": "HTTP & HTTPS agents with cookie and proxy support",
 	"main": "bin/agents.js",
 	"types": "bin/agents.d.ts",
@@ -29,7 +29,7 @@
 		"axios"
 	],
 	"author": "dmpzh",
-	"license": "ISC",
+	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/dmpzh/node-cookie-proxy-agent/issues"
 	},
