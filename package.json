@@ -1,6 +1,6 @@
 {
 	"name": "node-cookie-proxy-agent",
-	"version": "1.0.6",
+	"version": "1.0.7",
 	"description": "HTTP & HTTPS agents with cookie and proxy support",
 	"main": "bin/agents.js",
 	"types": "bin/agents.d.ts",
@@ -26,6 +26,7 @@
 		"agent",
 		"http",
 		"https",
+		"socks",
 		"axios"
 	],
 	"author": "dmpzh",
@@ -48,6 +49,7 @@
 	"peerDependencies": {
 		"http-proxy-agent": "^5.0.0",
 		"https-proxy-agent": "^5.0.1",
+		"socks-proxy-agent": "^6.2.0",
 		"tough-cookie": "^4.0.0"
 	},
 	"dependencies": {

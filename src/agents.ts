@@ -3,6 +3,7 @@ import { IncomingMessage } from 'http';
 import createHttpProxyAgent, { HttpProxyAgent } from 'http-proxy-agent';
 import createHttpsProxyAgent, { HttpsProxyAgent } from 'https-proxy-agent';
 import { Socket } from 'net';
+import createSocksProxyAgent, { SocksProxyAgent } from 'socks-proxy-agent';
 import { Cookie, CookieJar } from 'tough-cookie';
 
 declare module 'agent-base' {
@@ -22,9 +23,9 @@ declare module 'agent-base' {
 
 abstract class BaseCookieProxyAgent extends Agent {
 	private readonly jar: CookieJar;
-	private readonly proxyAgent: HttpProxyAgent | HttpsProxyAgent;
+	private readonly proxyAgent: HttpProxyAgent | HttpsProxyAgent | SocksProxyAgent;
 
-	constructor(jar: CookieJar, proxyAgent: HttpProxyAgent | HttpsProxyAgent) {
+	constructor(jar: CookieJar, proxyAgent: HttpProxyAgent | HttpsProxyAgent | SocksProxyAgent) {
 		super();
 		this.jar = jar;
 		this.proxyAgent = proxyAgent;
@@ -121,5 +122,11 @@ export class HttpCookieProxyAgent extends BaseCookieProxyAgent {
 export class HttpsCookieProxyAgent extends BaseCookieProxyAgent {
 	constructor(jar: CookieJar, proxy: string | createHttpsProxyAgent.HttpsProxyAgentOptions) {
 		super(jar, new HttpsProxyAgent(proxy));
+	}
+}
+
+export class SocksCookieProxyAgent extends BaseCookieProxyAgent {
+	constructor(jar: CookieJar, proxy: string | createSocksProxyAgent.SocksProxyAgentOptions) {
+		super(jar, new SocksProxyAgent(proxy));
 	}
 }
